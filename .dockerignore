@@ -1,0 +1,25 @@
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Development
+node_modules/
+.env
+.DS_Store
+*.log
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+ROADMAP.md
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db

@@ -157,6 +157,69 @@ router.get('/results', (req, res) => {
   }
 });
 
+// GET /api/results/csv - Export results as CSV
+router.get('/results/csv', (req, res) => {
+  try {
+    const scoringResults = dataStore.getScoringResults();
+    
+    if (scoringResults.length === 0) {
+      return res.status(404).json({ error: 'No results available for export' });
+    }
+
+    // Generate CSV headers
+    const headers = [
+      'name',
+      'role', 
+      'company',
+      'intent',
+      'score',
+      'reasoning',
+      'rule_score',
+      'ai_score',
+      'role_points',
+      'industry_points',
+      'completeness_points'
+    ];
+
+    // Generate CSV rows
+    const csvRows = [headers.join(',')];
+    
+    scoringResults.forEach(result => {
+      const aiScore = result.intent === 'High' ? 50 : result.intent === 'Medium' ? 30 : 10;
+      const ruleScore = (result.rule_breakdown?.role_score || 0) + 
+                       (result.rule_breakdown?.industry_score || 0) + 
+                       (result.rule_breakdown?.completeness_score || 0);
+      
+      const row = [
+        `"${(result.name || '').replace(/"/g, '""')}"`,
+        `"${(result.role || '').replace(/"/g, '""')}"`,
+        `"${(result.company || '').replace(/"/g, '""')}"`,
+        result.intent || 'Low',
+        result.score || 0,
+        `"${(result.reasoning || '').replace(/"/g, '""')}"`,
+        ruleScore,
+        aiScore,
+        result.rule_breakdown?.role_score || 0,
+        result.rule_breakdown?.industry_score || 0,
+        result.rule_breakdown?.completeness_score || 0
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    const csvContent = csvRows.join('\n');
+    
+    // Set headers for file download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="lead-scores-${new Date().toISOString().split('T')[0]}.csv"`);
+    res.setHeader('Content-Length', Buffer.byteLength(csvContent));
+    
+    res.send(csvContent);
+  } catch (error) {
+    console.error('CSV export error:', error);
+    res.status(500).json({ error: 'Failed to export results as CSV' });
+  }
+});
+
 // GET /api/leads - List uploaded leads (helper endpoint)
 router.get('/leads', (req, res) => {
   const leads = dataStore.getLeads();

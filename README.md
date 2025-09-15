@@ -2,17 +2,17 @@
 
 A production-ready backend service that scores leads based on product/offer context using rule-based logic combined with AI reasoning. Built with Node.js, Express, and Google Gemini AI.
 
-## 🚀 Live Demo
+## Live Demo
 
-**API Base URL:** `https://your-deployed-url.com` *(will be updated after deployment)*
+**API Base URL:** `https://p01--assign--tkqnvyy8br9c.code.run` 
 
-## 📋 Assignment Overview
+## Assignment Overview
 
 This service accepts product/offer information and CSV lead data, then assigns each lead a 0-100 score with intent classification (High/Medium/Low) using:
 - **Rule Layer (max 50 points):** Role relevance, industry matching, data completeness
 - **AI Layer (max 50 points):** Google Gemini AI analysis with structured XML prompting
 
-## 🛠️ Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 - Node.js 16+
@@ -48,7 +48,7 @@ This service accepts product/offer information and CSV lead data, then assigns e
    curl http://localhost:3000/health
    ```
 
-## 📚 API Documentation
+## API Documentation
 
 ### Health Check
 ```bash
@@ -125,6 +125,17 @@ GET /api/results
 curl http://localhost:3000/api/results
 ```
 
+### 5. Export Results as CSV (Bonus Feature)
+```bash
+GET /api/results/csv
+```
+
+**Example cURL:**
+```bash
+curl http://localhost:3000/api/results/csv
+# Downloads a CSV file with detailed scoring breakdown
+```
+
 **Sample Response:**
 ```json
 {
@@ -150,7 +161,7 @@ curl http://localhost:3000/api/results
 }
 ```
 
-## 🧮 Scoring Algorithm
+## Scoring Algorithm
 
 ### Rule Layer (Max 50 Points)
 
@@ -213,7 +224,7 @@ You are an expert B2B lead qualification analyst. Analyze the provided lead agai
 
 **Final Score = Rule Score + AI Score (0-100)**
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ├── server.js              # Express server setup
@@ -227,14 +238,14 @@ You are an expert B2B lead qualification analyst. Analyze the provided lead agai
 └── package.json           # Dependencies and scripts
 ```
 
-## 🔧 Error Handling & Resilience
+## Error Handling & Resilience
 
 - **AI Fallback:** If Gemini API fails, system uses intelligent rule-based fallback
 - **Input Validation:** Comprehensive validation for all endpoints
 - **Graceful Degradation:** Service continues working even with partial failures
 - **Structured Logging:** Clear error messages and debugging information
 
-## 🧪 Testing Examples
+## Testing Examples
 
 ### Complete Workflow Test
 ```bash
@@ -253,18 +264,30 @@ curl -X POST http://localhost:3000/api/score
 
 # 4. Get results
 curl http://localhost:3000/api/results
+
+# 5. Export as CSV (bonus feature)
+curl http://localhost:3000/api/results/csv -o results.csv
 ```
 
-## 🚀 Deployment
+## Deployment
 
-*Deployment instructions will be added after selecting cloud platform*
+### Docker Support
+```bash
+# Build and run with Docker
+docker build -t lead-scoring-api .
+docker run -p 3000:3000 --env-file .env lead-scoring-api
 
-## 📝 Technical Decisions
+# Or with docker-compose
+docker-compose up -d
+```
+
+## Technical Decisions
 
 ### Why Minimal Dependencies?
-- **Express + CORS + dotenv + @google/generative-ai** only
+- **Express + CORS + dotenv + @google/generative-ai + validator** only
 - Faster startup, smaller footprint
 - Built-in CSV parsing using native JavaScript
+- Professional validation with validator library
 - No external file upload middleware needed
 
 ### Why Gemini AI?
@@ -279,27 +302,24 @@ curl http://localhost:3000/api/results
 - Easy to migrate to persistent storage later
 - Perfect for assignment demonstration
 
-## 🎯 Assignment Completion Status
+## Assignment Completion Status
 
-✅ **Core Requirements:**
-- ✅ POST /offer endpoint with validation
-- ✅ POST /leads/upload with CSV parsing  
-- ✅ Rule-based scoring (50 points max)
-- ✅ AI integration with Gemini
-- ✅ POST /score and GET /results endpoints
-- ✅ Proper error handling and fallbacks
-- ✅ Clean code with documentation
-- ✅ Structured XML prompting for AI
+**Core Requirements:**
+- POST /offer endpoint with validation
+- POST /leads/upload with CSV parsing  
+- Rule-based scoring (50 points max)
+- AI integration with Gemini
+- POST /score and GET /results endpoints
+- Proper error handling and fallbacks
+- Clean code with documentation
+- Structured XML prompting for AI
 
-🔄 **In Progress:**
-- 🔄 Deployment to cloud platform
-- 🔄 Live API URL
-
-💡 **Bonus Features (Optional):**
-- ⏳ CSV export endpoint
-- ⏳ Unit tests for rule layer
-- ⏳ Docker containerization
+**Bonus Features (Completed):**
+- CSV export endpoint at `/api/results/csv`
+- Docker containerization with multi-stage build
+- Professional input validation with validator library
+- Unit tests for rule layer (optional)
 
 ---
 
-**Built with ❤️ by Ujjwal Sharma**
+**Built with care by Ujjwal Sharma**
